@@ -47,8 +47,8 @@ const INITIAL_DIRECTION = DIRECTIONS[KeyUtil.keyToCode('down_arrow')];
 /**
  * Determines the speed of the snake
  */
-let s = new BehaviorSubject(SPEED);
-let ticks$ = s.pipe(
+let speedSubscription = new BehaviorSubject(SPEED);
+let ticks$ = speedSubscription.pipe(
   switchMap(v => interval(v))
 );
 
@@ -131,7 +131,7 @@ let appleEaten$ = apples$.pipe(
   skip(1),
   tap(() => {
     SPEED = incrementSnakeSpeed(SPEED);
-    s.next(SPEED);
+    speedSubscription.next(SPEED);
     length$.next(POINTS_PER_APPLE)
   })
 ).subscribe();

@@ -22,10 +22,6 @@ export function nextDirection(previous, next) {
   return next;
 }
 
-export function pause(snake) {
-  return snake;
-}
-
 export function move(snake, [direction, snakeLength, pause]) {
   if(!pause) {
     let nx = snake[0].x;
