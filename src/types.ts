@@ -10,5 +10,5 @@ export interface Scene {
 }
 
 export interface Directions {
-  [key: number]: Point2D;
+  [key: string]: Point2D;
 }

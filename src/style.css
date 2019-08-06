@@ -5,3 +5,16 @@ canvas {
 body {
   text-align: center;
 }
+
+#score {
+  margin-top: 20px;
+}
+
+button {
+  padding: 10px 20px;
+  margin: 0 10px;
+}
+
+button#right {
+
+}

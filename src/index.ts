@@ -1,9 +1,9 @@
-import {BehaviorSubject, combineLatest, fromEvent, interval, Observable} from 'rxjs';
+import {BehaviorSubject, combineLatest, fromEvent, interval, merge, Observable, of} from 'rxjs';
 import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
 import {
   distinctUntilChanged,
   filter,
-  map,
+  map, mergeMap,
   scan,
   share,
   skip,
@@ -18,7 +18,6 @@ import {renderGameOver, renderScene} from './canvas';
 import {POINTS_PER_APPLE, SNAKE_LENGTH} from './constants';
 
 import {eat, generateApples, generateSnake, incrementSnakeSpeed, isGameOver, move, nextDirection} from './game.util';
-import {KeyUtil} from './keys.util';
 import './style.css';
 import {Directions, Point2D} from './types';
 
@@ -36,19 +35,26 @@ let SPEED = 150;
 const FPS = 60;
 
 const DIRECTIONS: Directions = {
-  37: { x: -1, y: 0 },
-  39: { x: 1, y: 0 },
-  38: { x: 0, y: -1 },
-  40: { x: 0, y: 1 }
+  'ArrowLeft': {x: -1, y: 0},
+  'ArrowRight': {x: 1, y: 0},
+  'ArrowUp': {x: 0, y: -1},
+  'ArrowDown': {x: 0, y: 1}
 };
 
-const INITIAL_DIRECTION = DIRECTIONS[KeyUtil.keyToCode('down_arrow')];
+const DIRECTIONS_BUTTON: Directions = {
+  'left': {x: -1, y: 0},
+  'right': {x: 1, y: 0},
+  'up': {x: 0, y: -1},
+  'down': {x: 0, y: 1}
+};
+
+let INITIAL_DIRECTION = DIRECTIONS['ArrowDown'];
 
 /**
  * Determines the speed of the snake
  */
-let speedSubscription = new BehaviorSubject(SPEED);
-let ticks$ = speedSubscription.pipe(
+let speedSubject = new BehaviorSubject(SPEED);
+let ticks$ = speedSubject.pipe(
   switchMap(v => interval(v))
 );
 
@@ -62,7 +68,7 @@ let keydown$ = fromEvent(document, 'keydown');
  * Pause the game
  */
 let pause$ = keydown$.pipe(
-  filter((event: KeyboardEvent) => event.keyCode === KeyUtil.keyToCode("spacebar")),
+  filter((event: KeyboardEvent) => event.key === ' '),
   map(() => {
     PAUSE = !PAUSE;
     return PAUSE;
@@ -74,8 +80,16 @@ let pause$ = keydown$.pipe(
 /**
  * Change direction of the snake based on the latest arrow keypress by the user
  */
-let direction$ = keydown$.pipe(
-  map((event: KeyboardEvent) => DIRECTIONS[event.keyCode]),
+let direction$ = merge(keydown$, click$).pipe(
+  map((event: KeyboardEvent | MouseEvent) => {
+    if(event instanceof  KeyboardEvent) {
+      return DIRECTIONS[event.key];
+    } else if (event instanceof MouseEvent) {
+      if(event.srcElement.id) {
+        return DIRECTIONS_BUTTON[event.srcElement.id]
+      }
+    }
+  }),
   filter(direction => !!direction),
   scan(nextDirection),
   startWith(INITIAL_DIRECTION),
@@ -131,8 +145,8 @@ let appleEaten$ = apples$.pipe(
   skip(1),
   tap(() => {
     SPEED = incrementSnakeSpeed(SPEED);
-    speedSubscription.next(SPEED);
-    length$.next(POINTS_PER_APPLE)
+    speedSubject.next(SPEED);
+    length$.next(POINTS_PER_APPLE);
   })
 ).subscribe();
 
@@ -140,7 +154,12 @@ let appleEaten$ = apples$.pipe(
  * Core game logic which returns an Observable of the scene. This will be
  * used to render the game to the canvas as it unfolds
  */
-let scene$ = combineLatest(snake$, apples$, score$, (snake, apples, score) => ({snake, apples, score}));
+let scene$ = combineLatest(snake$, apples$, score$)
+  .pipe(
+    map(([snake, apples, score]) => {
+      return {snake, apples, score};
+    })
+  );
 
 /**
  * This stream takes care of rendering the game while maintaining 60 FPS
