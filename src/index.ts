@@ -1,9 +1,9 @@
-import {BehaviorSubject, combineLatest, fromEvent, interval, merge, Observable, of} from 'rxjs';
-import {animationFrame} from 'rxjs/internal/scheduler/animationFrame';
+import { BehaviorSubject, combineLatest, fromEvent, interval, merge, Observable } from 'rxjs';
+import { animationFrame } from 'rxjs/internal/scheduler/animationFrame';
 import {
   distinctUntilChanged,
   filter,
-  map, mergeMap,
+  map,
   scan,
   share,
   skip,
@@ -14,12 +14,12 @@ import {
   withLatestFrom
 } from 'rxjs/operators';
 
-import {renderGameOver, renderScene} from './canvas';
-import {POINTS_PER_APPLE, SNAKE_LENGTH} from './constants';
+import { renderGameOver, renderScene } from './canvas';
+import { POINTS_PER_APPLE, SNAKE_LENGTH } from './constants';
 
-import {eat, generateApples, generateSnake, incrementSnakeSpeed, isGameOver, move, nextDirection} from './game.util';
+import { eat, generateApples, generateSnake, incrementSnakeSpeed, isGameOver, move, nextDirection } from './game.util';
 import './style.css';
-import {Directions, Point2D} from './types';
+import { Directions, Point2D } from './types';
 
 /**
  * Create canvas element and append it to the page

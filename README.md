@@ -1,29 +1,14 @@
-# README #
+# Snake game with Rxjs
 
-This README would normally document whatever steps are necessary to get your application up and running.
+The snake game written using Rxjs observables.
 
-### What is this repository for? ###
+## Setup
 
-* Quick summary
-* Version
-* [Learn Markdown](https://bitbucket.org/tutorials/markdowndemo)
+⚠️ NodeJs recommended to **v16**, otherwise you could get errors ⚠️
 
-### How do I get set up? ###
+```
+npm i --force
+npm run start
+```
 
-* Summary of set up
-* Configuration
-* Dependencies
-* Database configuration
-* How to run tests
-* Deployment instructions
-
-### Contribution guidelines ###
-
-* Writing tests
-* Code review
-* Other guidelines
-
-### Who do I talk to? ###
-
-* Repo owner or admin
-* Other community or team contact
+Then open 

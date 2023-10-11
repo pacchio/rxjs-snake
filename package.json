@@ -1,11 +1,10 @@
 {
-  "name": "rxjs-based-game-loop",
+  "name": "rxjs-snake",
   "version": "1.0.0",
-  "private": true,
   "main": "lib/index.js",
   "scripts": {
     "build": "webpack --mode=production",
-    "dev:build": "webpack --mode=development --watch"
+    "start:dev": "webpack-dev-server --mode=development --port 9000"
   },
   "dependencies": {
     "rxjs": "6.4.0"
@@ -29,5 +28,8 @@
     "webpack": "^4.36.1",
     "webpack-cli": "^3.3.6",
     "webpack-dev-server": "^3.7.2"
+  },
+  "volta": {
+    "node": "16.13.2"
   }
 }
