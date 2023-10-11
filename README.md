@@ -11,4 +11,4 @@ npm i --force
 npm run start
 ```
 
-Then open 
+Then open http://localhost:9000 and start to play!
